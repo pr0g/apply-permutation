@@ -3,7 +3,7 @@
 #include <random>
 #include <vector>
 
-#include "demo.h"
+#include "apply-permutation.h"
 
 void demo_apply_permutation() {
   std::vector<int32_t> objects(10);
