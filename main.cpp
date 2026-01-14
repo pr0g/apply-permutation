@@ -6,22 +6,55 @@
 #include "apply-permutation.h"
 
 void demo_apply_permutation() {
-  std::vector<int32_t> objects(10);
-  std::iota(objects.begin(), objects.end(), 1);
+  {
+    int32_t offset = 0;
+    int32_t size = 10;
 
-  const size_t seed = 1;
-  std::mt19937 gen(seed);
-  std::shuffle(objects.begin(), objects.end(), gen);
-  std::println("{}", objects);
+    std::vector<int32_t> objects(size);
+    std::iota(objects.begin(), objects.end(), 1);
 
-  std::vector<int32_t> indices(objects.size());
-  std::iota(indices.begin(), indices.end(), 0);
-  std::sort(indices.begin(), indices.end(), [&objects](auto lhs, auto rhs) {
-    return objects[lhs] < objects[rhs];
-  });
+    std::println("offset: {}, size: {}", offset, size);
 
-  apply_permutation(0, objects.size(), indices.begin(), objects.begin());
-  std::println("{}", objects);
+    const size_t seed = 1;
+    std::mt19937 gen(seed);
+    std::shuffle(objects.begin(), objects.end(), gen);
+    std::println("before: {}", objects);
+
+    std::vector<int32_t> indices(objects.size());
+    std::iota(indices.begin(), indices.end(), 0);
+    std::sort(indices.begin(), indices.end(), [&objects](auto lhs, auto rhs) {
+      return objects[lhs] < objects[rhs];
+    });
+
+    apply_permutation(0, objects.size(), indices.begin(), objects.begin());
+    std::println("after:  {}", objects);
+  }
+
+  std::cout << '\n';
+
+  {
+    int32_t offset = 5;
+    int32_t size = 10;
+
+    std::vector<int32_t> objects(20);
+    std::iota(objects.begin(), objects.end(), 1);
+
+    std::println("offset: {}, size: {}", offset, size);
+
+    const size_t seed = 1;
+    std::mt19937 gen(seed);
+    std::shuffle(objects.begin(), objects.end(), gen);
+    std::println("before: {}", objects);
+
+    std::vector<int32_t> indices(size);
+    std::iota(indices.begin(), indices.end(), offset);
+    std::sort(indices.begin(), indices.end(), [&objects](auto lhs, auto rhs) {
+      return objects[lhs] < objects[rhs];
+    });
+
+    apply_permutation(offset, size, indices.begin(), objects.begin());
+    std::println("after:  {}", objects);
+  }
 }
 
 void demo_apply_inverse_permutation() {
@@ -31,7 +64,7 @@ void demo_apply_inverse_permutation() {
   const size_t seed = 1;
   std::mt19937 gen(seed);
   std::shuffle(objects.begin(), objects.end(), gen);
-  std::println("{}", objects);
+  std::println("before: {}", objects);
 
   const int32_t offset = 3;
   const int32_t range = 5;
@@ -48,7 +81,7 @@ void demo_apply_inverse_permutation() {
     result_1[i] = objects[indices[i - offset]];
   }
 
-  std::println("{}", result_1);
+  std::println("copy:   {}", result_1);
 
   std::vector<int32_t> result_2(objects.size());
   for (int32_t i = offset; i < offset + range; i++) {
@@ -58,8 +91,8 @@ void demo_apply_inverse_permutation() {
   apply_inverse_permutation(
     offset, offset + range, indices.begin(), result_1.begin());
 
-  std::println("{} - copy", result_2);
-  std::println("{} - inplace", result_1);
+  std::println("copy (inverse):    {}", result_2);
+  std::println("inplace (inverse): {}", result_1);
 }
 
 int main(int argc, char** argv) {
